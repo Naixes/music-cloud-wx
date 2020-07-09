@@ -1,0 +1,11 @@
+<!--pages/playlist/playlist.wxml-->
+<!-- 轮播图组件 -->
+<swiper indicator-dots="true" autoplay="true" interval="2000" duration="1000">
+  <block wx:for="{{swiperImgUrls}}">
+    <swiper-item>
+      <!-- mode: scaleToFill aspectFit widthFix ... -->
+      <!-- 注意图片适配不同机型 -->
+      <image src="{{item.url}}" mode="widthFix" class="img"></image>
+    </swiper-item>
+  </block>
+</swiper>
