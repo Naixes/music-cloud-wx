@@ -10,3 +10,8 @@
 
 - [云开发文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
 
+## 云函数
+
+右键云函数文件夹新建node云函数
+
+使用第三方库`request, request-promise`来发送请求
