@@ -15,7 +15,7 @@ Component({
     ["playlist.playCount"](count) {
       this.setData({
         // 新增属性保存处理过后的值
-        ["playlist._count"]: this._transNumber(count, 2)
+        _count: this._transNumber(count, 2)
       })
     }
   },

@@ -3,7 +3,7 @@
 <swiper indicator-dots="true" autoplay="true" interval="2000" duration="1000">
   <!-- 区块标签，不会渲染到页面 -->
   <!-- *this:指向当前元素本身 -->
-  <block wx:for="{{swiperImgUrls}}" wx:key="*this">
+  <block wx:for="{{swiperImgUrls}}" wx:key="index">
     <swiper-item>
       <!-- mode: scaleToFill aspectFit widthFix ... -->
       <!-- 注意图片适配不同机型 -->
@@ -14,6 +14,6 @@
 <!-- 列表组件 -->
 <view class="playlist-container">
   <block wx:for="{{playList}}" wx:key="_id">
-    <s-playlist playlist="{{item}}"></s-playlist>
+    <s-playlist class="playlist-item" playlist="{{item}}"></s-playlist>
   </block>
 </view>

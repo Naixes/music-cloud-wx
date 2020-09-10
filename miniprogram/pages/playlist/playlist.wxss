@@ -6,6 +6,10 @@
 .playlist-container {
   margin-top: 10rpx;
   display: flex;
-  justify-content: space-around;
   flex-wrap: wrap;
+}
+.playlist-item {
+  width: 33.3%;
+  display: flex;
+  justify-content: center;
 }
