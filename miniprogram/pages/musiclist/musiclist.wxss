@@ -1,0 +1,43 @@
+/* pages/musiclist/musiclist.wxss */
+.info-container {
+  height: 320rpx;
+  /* 模糊 */
+  filter: blur(40rpx);
+  opacity: 0.4;
+  margin-bottom: 24rpx;
+}
+.info-mask {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 320rpx;
+  z-index: -1;
+  background-color: #333;
+}
+.info-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 320rpx;
+  width: 100%;
+  display: flex;
+  padding: 20rpx;
+  align-items: center;
+  box-sizing: border-box;
+}
+.info-img{
+  width: 280rpx;
+  height: 280rpx;
+  border-radius: 6rpx;
+  margin-right: 26rpx;
+}
+.info-name {
+  flex-grow: 1;
+  line-height: 60rpx;
+  /* 防止名称过长超出限制的显示范围 */
+  width: 0;
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: 400;
+}

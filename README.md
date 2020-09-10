@@ -25,16 +25,18 @@
 ```js
 // 云函数入口文件
 const cloud = require('wx-server-sdk')
+const rp = require('request-promise')
 
 cloud.init()
 
 const db = cloud.database()
+const URL = 'https://apis.imooc.com/personalized?icode=A0CD56251BD9C237'
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const playlist = [
-    {"_id":"08560c9e5d042a5c0174f1ca26f1d7b2","copywrier":"热门推荐","playCount":1.4641238e+06,"highQuality":false,"type":0.0,"canDislike":true,"name":"天气转热了，适合听点凉爽的歌。","alg":"cityLevel_unknow","createTime":{"$date":"2019-06-14T23:14:36.746Z"},"id":2.780381322e+09,"picUrl":"https://p2.music.126.net/Biky7TE4CtW6NjGuqoUKZg==/109951164041827987.jpg","trackCount":53.0}
-  ]
+  const playlist = await rp(URL).then(res => {
+    return JSON.parse(res).result
+  })
   // 这里的打印结果需要在云函数中查看
   console.log('playlist', playlist)
   // 将获取到的数据插入云数据库
@@ -196,6 +198,34 @@ koa风格的云函数路由库
 安装
 
 use定于全局中间件，router定义局部中间件
+
+```js
+// 云函数入口文件
+const cloud = require('wx-server-sdk')
+const TcbRouter = require('tcb-router')
+
+cloud.init()
+
+// 云函数入口函数
+exports.main = async (event, context) => {
+  const app = new TcbRouter({
+    event
+  })
+
+  app.router('playlist', async (ctx, next) => {
+    ctx.body = await cloud.database().collection('playlist')
+    .skip(event.start)
+    .limit(event.limit)
+    .orderBy('createTime', 'desc')
+    .get()
+    .then(res => {
+      return res
+    })
+  })
+
+  return app.serve()
+}
+```
 
 日志需要在云函数的日志中查看
 

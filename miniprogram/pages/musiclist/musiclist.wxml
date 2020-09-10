@@ -1,0 +1,9 @@
+<view class="info-container" style="background: url({{listInfo.coverImgUrl}}) no-repeat top/cover"></view>
+<view class="info-mask"></view>
+<view class="info-content">
+  <image class="info-img" src="{{listInfo.coverImgUrl}}"></image>
+  <view class="info-name">{{listInfo.name}}</view>
+</view>
+
+<!-- 使用和playlist不同的组件写法，在子组件中循环数据 -->
+<s-musiclist musiclist="{{musicList}}"></s-musiclist>

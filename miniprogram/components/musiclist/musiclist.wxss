@@ -1,0 +1,40 @@
+/* components/musiclist.wxss */
+.list-container {
+  display: flex;
+  padding: 14rpx 20rpx;
+  align-items: center; /* 垂直居中 */
+}
+.list-index {
+  color: #888;
+  font-size: 34rpx;
+  width: 80rpx;
+}
+.list-content {
+  flex-grow: 1;
+  /* 防止名称过长超出限制的显示范围 */
+  width: 0;
+}
+.list-name-container{
+  font-size: 34rpx;
+}
+.list-name {
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 10rpx;
+  margin-right: 24rpx;
+}
+.list-alia {
+  color: #888;
+}
+.list-singer {
+  font-size: 24rpx;
+  color: #888;
+}
+.active .list-index, 
+.active .list-name, 
+.active .list-alia, 
+.active .list-singer {
+  color: #d43c33;
+}
