@@ -6,6 +6,7 @@ cloud.init()
 const rp = require('request-promise')
 
 const db = cloud.database()
+const playlistCollection = db.collection('playlist')
 // const URL = 'http://musicapi.xiecheng.live/personalized'
 
 // 云函数入口函数
@@ -23,12 +24,52 @@ exports.main = async (event, context) => {
     {"_id":"08560c9e5d0829820362a79f4b049d2d","alg":"cityLevel_unknow","name":"「乐队的夏天」参赛歌曲合集丨EP04更新","highQuality":false,"picUrl":"http://p2.music.126.net/2WE5C2EypEwLJd2qXFd4cw==/109951164086686815.jpg","trackCount":158.0,"createTime":{"$date":"2019-06-18T00:00:02.553Z"},"copywriter":"热门推荐","playCount":1.5742008e+06,"canDislike":true,"id":2.79477263e+09,"type":0.0}
   ]
   // 这里的打印结果需要在云函数中查看
-  console.log('playlist', playlist)
-  // 将获取到的数据插入云数据库
-  for (let index = 0; index < playlist.length; index++) {
-    await db.collection('playlist').add({
+  // console.log('playlist', playlist)
+
+  // 获取数据库中的数据，条数限制100，小程序端获取条数限制20
+  // const dbList = await playlistCollection.get()
+  // 突破条数限制：多次获取数据并拼接
+  const MAX_LIMIT = 100
+  const countObj = await playlistCollection.count()
+  const total = countObj.total
+  const batchTimes = Math.ceil(total / MAX_LIMIT)
+  const tasks = []
+  for (let index = 0; index < batchTimes; index++) {
+    let promise = playlistCollection.skip(index * MAX_LIMIT).limit(MAX_LIMIT).get()
+    tasks.push(promise)
+  }
+  let dbList = {
+    data: []
+  }
+  if(tasks.length > 0) {
+    dbList = (await Promise.all(tasks)).reduce((acc, cur) => {
+      return {
+        data: acc.data.concat(cur)
+      }
+    })
+  }
+  // 获取新增的数据
+  let newData = []
+  for (let i = 0; i < playlist.length; i++) {
+    // true标识不相等
+    let flag = true
+    // data中是真正的数据
+    for (let j = 0; j < dbList.data.length; j++) {
+      if(playlist[i].id === dbList.data[j].id) {
+        flag = false
+        break
+      }
+    }
+    if(flag) {
+      newData.push(playlist[i])
+    }
+  }
+
+  // 将新增的数据插入云数据库
+  for (let index = 0; index < newData.length; index++) {
+    await playlistCollection.add({
       data: {
-        ...playlist[index],
+        ...newData[index],
         createTime: db.serverDate()
       }
     }).then(res => {
@@ -37,4 +78,7 @@ exports.main = async (event, context) => {
       console.error('插入失败')
     })
   }
+
+  // 返回新增数据条数
+  return newData.length
 }
