@@ -10,6 +10,10 @@
 
 - [云开发文档](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
 
+## 云环境
+
+一个用户最多两个
+
 ## 云函数/云数据库
 
 右键云函数文件夹新建node云函数
@@ -120,18 +124,6 @@ Cron 表达式有七个必需字段，按空格分隔。
 | :----- | :----- | :----- | :----- | :----- | :----- | :----- |
 | 秒     | 分钟   | 小时   | 日     | 月     | 星期   | 年     |
 
-其中，每个字段都有相应的取值范围：
-
-| 字段 | 值                                                           | 通配符  |
-| :--- | :----------------------------------------------------------- | :------ |
-| 秒   | 0-59 的整数                                                  | , - * / |
-| 分钟 | 0-59 的整数                                                  | , - * / |
-| 小时 | 0-23 的整数                                                  | , - * / |
-| 日   | 1-31 的整数（需要考虑月的天数）                              | , - * / |
-| 月   | 1-12 的整数 或 JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC | , - * / |
-| 星期 | 0-6 的整数 或 MON,TUE,WED,THU,FRI,SAT,SUN；其中 0 指星期一，1 指星期二，依次类推 | , - * / |
-| 年   | 1970~2099 的整数                                             | , - * / |
-
 1. 通配符
 
 | 通配符     | 含义                                                         |
@@ -163,3 +155,49 @@ Cron 表达式有七个必需字段，按空格分隔。
 超时时间等
 
 ### 在页面上执行云函数更新数据
+
+```js
+  _getMusic() {
+    wx.showLoading({
+      title: '加载中',
+    })
+    wx.cloud.callFunction({
+      name: "music",
+      data: {
+        start: this.data.playList.length,
+        limit: MAX_LIMIT
+      }
+    }).then(res => {
+      this.setData({
+        // 云函数的返回值在result中
+        playList: this.data.playList.concat(res.result.data)
+      })
+      wx.stopPullDownRefresh()
+      wx.hideLoading()
+    })
+  }
+})
+```
+
+### tcb-router
+
+一个用户在一个云环境中最多创建50个云函数
+
+将相似的请求放到同一个云函数中处理
+
+koa风格的云函数路由库
+
+#### koa洋葱模型
+
+中间件
+
+#### 使用
+
+安装
+
+use定于全局中间件，router定义局部中间件
+
+日志需要在云函数的日志中查看
+
+
+
