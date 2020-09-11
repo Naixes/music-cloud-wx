@@ -229,5 +229,132 @@ exports.main = async (event, context) => {
 
 日志需要在云函数的日志中查看
 
+### 将数据存储到本地
 
+```js
+...
+// 将音乐列表数据存到本地
+wx.setStorageSync('musiclist', pl.tracks)
+...
+```
+
+### 引入字体图标
+
+```css
+/**app.wxss**/
+@import "iconfont.wxss";
+
+
+<!-- 控制器 -->
+<view class="control">
+<view class="iconfont icon-shangyishoushangyige"></view>
+<view class="iconfont icon-bofang"></view>
+<view class="iconfont icon-xiayigexiayishou"></view>
+</view>
+```
+
+### 背景播放音乐
+
+```js
+// 获取背景音频管理器
+const backgroundAudioManager = wx.getBackgroundAudioManager()
+
+...
+// 设置背景音乐管理器，如果需要退出后继续播放还要设置requiredBackgroundModes
+backgroundAudioManager.src = res.result.data[0].url
+backgroundAudioManager.title = musicinfo.name
+backgroundAudioManager.coverImgUrl = musicinfo.al.picUrl
+backgroundAudioManager.singer = musicinfo.ar[0].name
+backgroundAudioManager.epname = musicinfo.al.name
+
+// 配置
+"requiredBackgroundModes": [
+    "audio"
+]
+
+// 事件
+backgroundAudioManager.onPlay(() => {
+    console.log('onPlay')
+})
+
+backgroundAudioManager.onStop(() => {
+    console.log('onStop')
+})
+
+backgroundAudioManager.onPause(() => {
+    console.log('Pause')
+})
+
+backgroundAudioManager.onWaiting(() => {
+    console.log('onWaiting')
+})
+
+backgroundAudioManager.onCanplay(() => {
+    console.log('onCanplay')
+})
+
+// 音乐进入后台播放时不会触发
+backgroundAudioManager.onTimeUpdate(() => {
+    console.log('onTimeUpdate')
+})
+
+backgroundAudioManager.onEnded(() => {
+    console.log("onEnded")
+})
+
+backgroundAudioManager.onError((res) => {
+    console.error(res.errMsg)
+    console.error(res.errCode)
+    wx.showToast({
+        title: '错误:' + res.errCode,
+    })
+})
+
+```
+
+### 可移动组件
+
+进度条：
+
+```html
+<!--components/progress-bar/progress-bar.wxml-->
+<view class="container">
+  <text class="time">{{showTime.currentTime}}</text>
+  <view class="control">
+    <movable-area class="movable-area">
+    <!-- dampling：阻尼系数 -->
+      <!-- 滑动区 -->
+      <movable-view 
+        class="movable-view"
+        direction="horizontal"
+        dampling="1000"
+        x="{{moveableDis}}"
+      ></movable-view>
+    </movable-area>
+    <!-- 进度条 -->
+    <progress
+      stroke-width="4"
+      backgroundColor="#969696"
+      activeColor="#fff"
+      percent="{{progress}}"
+    ></progress>
+  </view>
+  <text class="time">{{showTime.totalTime}}</text>
+</view>
+```
+
+**获取元素宽度**
+
+```js
+const query = this.createSelectorQuery()
+query.select('.movable-area').boundingClientRect()
+query.select('.movable-view').boundingClientRect()
+query.exec(rect => {
+    console.log(rect)
+    moveableAreaWidth = rect[0].width
+    moveableViewWidth = rect[1].width
+})
+```
+
+### 组件生命周期
 

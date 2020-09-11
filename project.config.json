@@ -50,13 +50,25 @@
 		"game": {
 			"list": []
 		},
+		"gamePlugin": {
+			"current": -1,
+			"list": []
+		},
 		"miniprogram": {
 			"current": 0,
 			"list": [
 				{
 					"id": -1,
 					"name": "db guide",
-					"pathName": "pages/databaseGuide/databaseGuide"
+					"pathName": "pages/databaseGuide/databaseGuide",
+					"query": ""
+				},
+				{
+					"id": 1,
+					"name": "歌曲列表页",
+					"pathName": "pages/musiclist/musiclist",
+					"query": "playlistId=5055796971",
+					"scene": null
 				}
 			]
 		}

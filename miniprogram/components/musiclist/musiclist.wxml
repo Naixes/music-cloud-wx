@@ -1,5 +1,5 @@
 <block wx:for="{{musiclist}}" wx:key="id">
-  <view class="list-container {{item.id === activeId ? 'active' : ''}}" data-musicid="{{item.id}}" bind:tap="onSelect">
+  <view class="list-container {{item.id === activeId ? 'active' : ''}}" data-musicindex="{{index}}" data-musicid="{{item.id}}" bind:tap="onSelect">
     <view class="list-index">{{index + 1}} </view>
     <view class="list-content">
       <view class="list-name-container">

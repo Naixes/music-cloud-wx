@@ -19,8 +19,12 @@ Component({
    */
   methods: {
     onSelect(event) {
+      const dataset  = event.currentTarget.dataset
       this.setData({
-        activeId: event.currentTarget.dataset.musicid
+        activeId: dataset.musicid
+      })
+      wx.navigateTo({
+        url: `../../pages/player/player?musicid=${this.data.activeId}&musicindex=${dataset.musicindex}`
       })
     }
   }

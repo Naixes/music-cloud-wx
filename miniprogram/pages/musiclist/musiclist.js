@@ -15,7 +15,10 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options)
+    // console.log(options)
+    wx.showLoading({
+      title: '加载中'
+    })
     // 获取歌单信息和歌曲列表
     wx.cloud.callFunction({
       name: 'music',
@@ -24,7 +27,7 @@ Page({
         playlistId: options.playlistId
       }
     }).then(res => {
-      console.log('res', res)
+      // console.log('res', res)
       const pl = res.result.playlist
       this.setData({
         listInfo: {
@@ -33,6 +36,9 @@ Page({
         },
         musicList: pl.tracks,
       })
+      wx.hideLoading()
+      // 将数据存到本地
+      wx.setStorageSync('musiclist', pl.tracks)
     })
   },
 

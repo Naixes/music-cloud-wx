@@ -14,6 +14,15 @@ exports.main = async (event, context) => {
     event
   })
 
+  // 获取歌曲播放url
+  app.router('musicurl', async (ctx, next) => {
+    ctx.body = await rp(`${BASE_URL}/song/url?id=${parseInt(event.musicid)}&${ICODE}`)
+    .then(res => {
+      return JSON.parse(res)
+    })
+  })
+
+  // 获取歌曲列表
   app.router('musiclist', async (ctx, next) => {
     ctx.body = await rp(`${BASE_URL}/playlist/detail?id=${parseInt(event.playlistId)}&${ICODE}`)
     .then(res => {

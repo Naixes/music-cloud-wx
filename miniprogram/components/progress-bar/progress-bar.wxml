@@ -1,0 +1,24 @@
+<!--components/progress-bar/progress-bar.wxml-->
+<view class="container">
+  <text class="time">{{showTime.currentTime}}</text>
+  <view class="control">
+    <movable-area class="movable-area">
+    <!-- dampling：阻尼系数 -->
+      <!-- 滑动区 -->
+      <movable-view 
+        class="movable-view"
+        direction="horizontal"
+        dampling="1000"
+        x="{{moveableDis}}"
+      ></movable-view>
+    </movable-area>
+    <!-- 进度条 -->
+    <progress
+      stroke-width="4"
+      backgroundColor="#969696"
+      activeColor="#fff"
+      percent="{{progress}}"
+    ></progress>
+  </view>
+  <text class="time">{{showTime.totalTime}}</text>
+</view>
