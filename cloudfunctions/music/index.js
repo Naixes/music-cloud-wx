@@ -5,8 +5,10 @@ const rp = require('request-promise')
 
 cloud.init()
 
-const BASE_URL = 'https://apis.imooc.com'
-const ICODE='icode=A0CD56251BD9C237';
+// const BASE_URL = 'https://apis.imooc.com'
+// const ICODE='icode=ABE313CC0016235D';
+// 换成网易云音乐的接口
+const BASE_URL = 'https://api.imjad.cn/cloudmusic'
 
 // 云函数入口函数
 exports.main = async (event, context) => {
@@ -16,7 +18,8 @@ exports.main = async (event, context) => {
 
   // 获取歌曲播放url
   app.router('musicurl', async (ctx, next) => {
-    ctx.body = await rp(`${BASE_URL}/song/url?id=${parseInt(event.musicid)}&${ICODE}`)
+    // ctx.body = await rp(`${BASE_URL}/song/url?id=${parseInt(event.musicid)}&${ICODE}`)
+    ctx.body = await rp(`${BASE_URL}/?id=${parseInt(event.musicid)}`)
     .then(res => {
       return JSON.parse(res)
     })
@@ -24,7 +27,8 @@ exports.main = async (event, context) => {
 
   // 获取歌曲列表
   app.router('musiclist', async (ctx, next) => {
-    ctx.body = await rp(`${BASE_URL}/playlist/detail?id=${parseInt(event.playlistId)}&${ICODE}`)
+    // ctx.body = await rp(`${BASE_URL}/playlist/detail?id=${parseInt(event.playlistId)}&${ICODE}`)
+    ctx.body = await rp(`${BASE_URL}/?type=playlist&id=${parseInt(event.playlistId)}`)
     .then(res => {
       return JSON.parse(res)
     })
