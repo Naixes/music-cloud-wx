@@ -6,6 +6,8 @@
     <!-- dampling：阻尼系数 -->
       <!-- 滑动区 -->
       <movable-view 
+        bind:change="onChange"
+        bind:touchend="onTouchEnd"
         class="movable-view"
         direction="horizontal"
         dampling="1000"
