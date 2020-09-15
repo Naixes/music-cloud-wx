@@ -15,6 +15,13 @@ exports.main = async (event, context) => {
   const app = new TcbRouter({
     event
   })
+  // 获取歌词
+  app.router('lyric', async (ctx, next) => {
+    ctx.body = await rp(`${BASE_URL}/?type=lyric&id=${parseInt(event.musicid)}`)
+    .then(res => {
+      return JSON.parse(res)
+    })
+  })
 
   // 获取歌曲播放url
   app.router('musicurl', async (ctx, next) => {

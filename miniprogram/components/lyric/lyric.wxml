@@ -1,2 +1,8 @@
 <!--components/lyric/lyric.wxml-->
-<text>components/lyric/lyric.wxml</text>
+<scroll-view class="lyric-scroll">
+  <view class="lyric-panel">
+    <block wx:for='{{lyricList}}'>
+      <view class="lyric">{{item.lrc}}</view>
+    </block>
+  </view>
+</scroll-view>

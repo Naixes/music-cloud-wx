@@ -10,7 +10,9 @@ Page({
    */
   data: {
     picUrl: '',
-    pause: true
+    pause: true,
+    showLyric: false,
+    lyric: '暂无歌词'
   },
 
   /**
@@ -56,6 +58,25 @@ Page({
         pause: false
       })
       wx.hideLoading()
+
+      // 获取歌词
+      wx.cloud.callFunction({
+        name: 'music',
+        data: {
+          musicid,
+          $url: 'lyric',
+        }
+      }).then(res => {
+        console.log(res)
+        this.setData({
+          lyric: res.result.lrc.lyric
+        })
+      })
+    })
+  },
+  toggleShow() {
+    this.setData({
+      showLyric: !this.data.showLyric
     })
   },
   togglePlaying() {

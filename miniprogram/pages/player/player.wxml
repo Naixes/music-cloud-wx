@@ -3,8 +3,12 @@
 
 <view class="player-info">
   <!-- 封面信息 -->
-  <view class="player-disc {{pause ? '' : 'play'}}">
+  <view hidden="{{showLyric}}" bind:tap="toggleShow" class="player-disc {{pause ? '' : 'play'}}">
     <image class="player-img rotation {{pause ? 'rotation-paused' : ''}}" src="{{picUrl}}"></image>
+  </view>
+  <!-- 歌词 -->
+  <view hidden="{{!showLyric}}" bind:tap="toggleShow" class="lyric">
+    <s-lyric show="{{showLyric}}" lyric="{{lyric}}"></s-lyric>
   </view>
   <!-- 进度条 -->
   <view class="progress-bar">
