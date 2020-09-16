@@ -404,6 +404,8 @@ this.triggerEvent('musicPlay')
 
 ### 在组件中使用全局样式
 
+由于组件存在样式隔离所以不能引用到全局的样式
+
 **方法1：拷贝对应样式到子组件**
 
 **方法2：使用父组件传递样式**
@@ -421,4 +423,79 @@ externalClasses: [
     'icon-sousuo',
 ],
 ```
+
+**方法3：关闭样式隔离**
+
+默认情况下，自定义组件的样式只受到自定义组件 wxss 的影响。除非以下两种情况：
+
+- `app.wxss` 或页面的 `wxss` 中使用了标签名选择器（或一些其他特殊选择器）来直接指定样式，这些选择器会影响到页面和全部组件。通常情况下这是不推荐的做法。
+- 指定特殊的样式隔离选项 `styleIsolation` 。
+
+```js
+Component({
+  options: {
+    styleIsolation: 'isolated'
+  }
+})
+```
+
+`styleIsolation` 选项从基础库版本 [2.6.5](https://developers.weixin.qq.com/miniprogram/dev/framework/compatibility.html) 开始支持。它支持以下取值：
+
+- `isolated` 表示启用样式隔离，在自定义组件内外，使用 class 指定的样式将不会相互影响（一般情况下的默认值）；
+- `apply-shared` 表示页面 wxss 样式将影响到自定义组件，但自定义组件 wxss 中指定的样式不会影响页面；
+- `shared` 表示页面 wxss 样式将影响到自定义组件，自定义组件 wxss 中指定的样式也会影响页面和其他设置了 `apply-shared` 或 `shared` 的自定义组件。（这个选项在插件中不可用。）
+
+**使用后两者时，请务必注意组件间样式的相互影响。**
+
+页面的默认值为 `shared` ，且还有以下几个额外的样式隔离选项可用：
+
+- `page-isolated` 表示在这个页面禁用 app.wxss ，同时，页面的 wxss 不会影响到其他自定义组件；
+- `page-apply-shared` 表示在这个页面禁用 app.wxss ，同时，页面 wxss 样式不会影响到其他自定义组件，但设为 `shared` 的自定义组件会影响到页面；
+- `page-shared` 表示在这个页面禁用 app.wxss ，同时，页面 wxss 样式会影响到其他设为 `apply-shared` 或 `shared` 的自定义组件，也会受到设为 `shared` 的自定义组件的影响。
+
+从小程序基础库版本 [2.10.1](https://developers.weixin.qq.com/miniprogram/dev/framework/compatibility.html) 开始，也可以在页面或自定义组件的 json 文件中配置 `styleIsolation` （这样就不需在 js 文件的 `options` 中再配置）。例如：
+
+```json
+{
+  "styleIsolation": "isolated"
+}
+```
+
+此外，小程序基础库版本 [2.2.3](https://developers.weixin.qq.com/miniprogram/dev/framework/compatibility.html) 以上支持 `addGlobalClass` 选项，即在 `Component` 的 `options` 中设置 `addGlobalClass: true` 。 这个选项等价于设置 `styleIsolation: apply-shared` ，但设置了 `styleIsolation` 选项后这个选项会失效。
+
+```js
+/* 组件 custom-component.js */
+Component({
+  options: {
+    addGlobalClass: true,
+  }
+})
+<!-- 组件 custom-component.wxml -->
+<text class="red-text">这段文本的颜色由 `app.wxss` 和页面 `wxss` 中的样式定义来决定</text>
+/* app.wxss */
+.red-text {
+  color: red;
+}
+```
+
+### 插槽
+
+```html
+<!-- 子组件：具名插槽 -->
+<slot name="modal-content"></slot>
+
+options: {
+    // 设置是否使用具名插槽
+    multipleSlots: true
+},
+
+<!-- 父组件 -->
+<s-bottom-modal modalShow="{{modalShow}}">
+    <view slot="modal-conten">
+    	...
+    </view>
+</s-bottom-modal>
+```
+
+
 

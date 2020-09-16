@@ -5,7 +5,13 @@ Page({
    * 页面的初始数据
    */
   data: {
+    modalShow: false
+  },
 
+  onPublish() {
+    this.setData({
+      modalShow: true
+    })
   },
 
   /**

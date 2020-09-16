@@ -1,11 +1,13 @@
 <!--pages/blog/blog.wxml-->
 <view class="container">
   <view class="header">
-    <view class="publish-container">
+    <view class="publish-container" bind:tap="onPublish">
       <i class="iconfont icon-fabu"></i>
     </view>
     <view class="search-container">
       <s-search iconfont="iconfont" icon-sousuo="icon-sousuo" />
     </view>
   </view>
+  <!-- 弹出层 -->
+  <s-bottom-modal modalShow="{{modalShow}}" />
 </view>

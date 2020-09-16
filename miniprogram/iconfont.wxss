@@ -27,7 +27,7 @@
   content: "\e7a5";
 }
 
-.icon-shanchu1:before {
+.icon-shanchu:before {
   content: "\e68c";
 }
 
