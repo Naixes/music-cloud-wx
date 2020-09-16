@@ -23,6 +23,9 @@ Page({
     musicindex = options.musicindex
     this._loadMusicInfo(options.musicid)
   },
+  timeUpdate(e) {
+    this.selectComponent('.lyric').update(e.detail.currentTime)
+  },
   _loadMusicInfo(musicid) {
     musiclist = wx.getStorageSync('musiclist')
     const musicinfo = musiclist[musicindex]

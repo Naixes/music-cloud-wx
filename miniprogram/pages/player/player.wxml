@@ -8,11 +8,11 @@
   </view>
   <!-- 歌词 -->
   <view hidden="{{!showLyric}}" bind:tap="toggleShow" class="lyric">
-    <s-lyric show="{{showLyric}}" lyric="{{lyric}}"></s-lyric>
+    <s-lyric class="lyric" show="{{showLyric}}" lyric="{{lyric}}"></s-lyric>
   </view>
   <!-- 进度条 -->
   <view class="progress-bar">
-    <s-progress-bar bind:playEnd="toNext"></s-progress-bar>
+    <s-progress-bar bind:timeUpdate="timeUpdate" bind:playEnd="toNext"></s-progress-bar>
   </view>
   <!-- 播放控制器 -->
   <view class="control">
