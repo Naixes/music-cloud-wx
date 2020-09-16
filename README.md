@@ -358,3 +358,67 @@ query.exec(rect => {
 
 ### 组件生命周期
 
+```js
+Component({
+  lifetimes: {
+    attached: function() {
+      // 在组件实例进入页面节点树时执行
+    },
+    detached: function() {
+      // 在组件实例被从页面节点树移除时执行
+    },
+  },
+  // 组件页面生命周期
+  pageLifetimes: {
+    show: function() {
+      // 页面被展示
+    },
+    hide: function() {
+      // 页面被隐藏
+    },
+    resize: function(size) {
+      // 页面尺寸变化
+    }
+  }
+})
+```
+
+### 优化
+
+减少setData()的使用频率
+
+### 自定义事件
+
+```js
+// 子组件触发事件
+this.triggerEvent('musicPlay')
+```
+父组件绑定事件
+
+```html
+<!-- 进度条 -->
+    <view class="progress-bar">
+        <s-progress-bar bind:musicPlay="onPlay" bind:musicPause="onPause" isSame="{{isSame}}" bind:timeUpdate="timeUpdate" bind:playEnd="toNext"></s-progress-bar>
+</view>
+```
+
+### 在组件中使用全局样式
+
+**方法1：拷贝对应样式到子组件**
+
+**方法2：使用父组件传递样式**
+
+注意：传递进来的样式类不能修改
+
+```html
+<!-- 父组件 -->
+<s-search iconfont="iconfont" icon-sousuo="icon-sousuo" />
+<!-- 子组件 -->
+<i class="iconfont icon-sousuo find"></i>
+<!-- js：接收传递的样式类 -->
+externalClasses: [
+    'iconfont',
+    'icon-sousuo',
+],
+```
+

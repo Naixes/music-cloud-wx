@@ -1,2 +1,11 @@
 <!--pages/blog/blog.wxml-->
-<text>pages/blog/blog.wxml</text>
+<view class="container">
+  <view class="header">
+    <view class="publish-container">
+      <i class="iconfont icon-fabu"></i>
+    </view>
+    <view class="search-container">
+      <s-search iconfont="iconfont" icon-sousuo="icon-sousuo" />
+    </view>
+  </view>
+</view>

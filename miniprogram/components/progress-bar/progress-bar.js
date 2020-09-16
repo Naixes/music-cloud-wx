@@ -18,7 +18,7 @@ Component({
   properties: {
     isSame: {
       type: Boolean,
-      default: false
+      value: false
     }
   },
 

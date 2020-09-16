@@ -69,6 +69,13 @@
 					"pathName": "pages/musiclist/musiclist",
 					"query": "playlistId=5055796971",
 					"scene": null
+				},
+				{
+					"id": 2,
+					"name": "发现页",
+					"pathName": "pages/blog/blog",
+					"query": "playlistId=5055796971",
+					"scene": null
 				}
 			]
 		}

@@ -8,7 +8,7 @@ Component({
   properties: {
     show: {
       type: Boolean,
-      default: false
+      value: false
     },
     lyric: String
   },
