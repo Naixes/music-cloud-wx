@@ -16,6 +16,15 @@ App({
       })
     }
 
-    this.globalData = {}
+    // 全局属性
+    this.globalData = {
+      activeMusicId: -1
+    }
+  },
+  getActiveMusicId() {
+    return this.globalData.activeMusicId
+  },
+  setActiveMusicId(id) {
+    this.globalData.activeMusicId = id
   }
 })

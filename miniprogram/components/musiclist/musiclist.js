@@ -1,4 +1,6 @@
 // components/musiclist.js
+// 获取app
+const app = getApp()
 Component({
   /**
    * 组件的属性列表
@@ -12,6 +14,15 @@ Component({
    */
   data: {
     activeId: -1
+  },
+
+  // 组件页面生命周期
+  pageLifetimes: {
+    show() {
+      this.setData({
+        activeId: app.getActiveMusicId()
+      })
+    }
   },
 
   /**

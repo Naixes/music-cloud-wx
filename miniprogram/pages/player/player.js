@@ -3,6 +3,8 @@ let musicindex = 0
 let musiclist = []
 // 获取背景音频管理器
 const backgroundAudioManager = wx.getBackgroundAudioManager()
+// 获取app
+const app = getApp()
 Page({
 
   /**
@@ -12,7 +14,9 @@ Page({
     picUrl: '',
     pause: true,
     showLyric: false,
-    lyric: '暂无歌词'
+    lyric: '暂无歌词',
+    // 是否和上次播放的是同一首歌曲，实现两次点入同一首歌时继续播放
+    isSame: false
   },
 
   /**
@@ -21,6 +25,10 @@ Page({
   onLoad: function (options) {
     // console.log(options)
     musicindex = options.musicindex
+    this.setData({
+      isSame: options.musicid == app.getActiveMusicId()
+    })
+    console.log(options.musicid, app.getActiveMusicId())
     this._loadMusicInfo(options.musicid)
   },
   timeUpdate(e) {
@@ -30,11 +38,16 @@ Page({
     musiclist = wx.getStorageSync('musiclist')
     const musicinfo = musiclist[musicindex]
     // 先停止正在播放的音乐
-    backgroundAudioManager.stop()
+    if(!this.data.isSame) {
+      backgroundAudioManager.stop()
+    }
     // 设置头部标题
     wx.setNavigationBarTitle({
       title: musicinfo.name,
     })
+    // 设置全局当前音乐id
+    app.setActiveMusicId(parseInt(musicid))
+    // 设置封面
     this.setData({
       picUrl: musicinfo.al.picUrl
     })
@@ -51,12 +64,21 @@ Page({
       }
     }).then(res => {
       // console.log(res.result.data[0].url)
+      // url返回为空时表示无权播放
+      if(!res.result.data[0].url) {
+        wx.showToast({
+          title: '无播放权限',
+        })
+        return
+      }
       // 设置背景音乐管理器，如果需要退出后继续播放还要设置
-      backgroundAudioManager.src = res.result.data[0].url
-      backgroundAudioManager.title = musicinfo.name
-      backgroundAudioManager.coverImgUrl = musicinfo.al.picUrl
-      backgroundAudioManager.singer = musicinfo.ar[0].name
-      backgroundAudioManager.epname = musicinfo.al.name
+      if(!this.data.isSame) {
+        backgroundAudioManager.src = res.result.data[0].url
+        backgroundAudioManager.title = musicinfo.name
+        backgroundAudioManager.coverImgUrl = musicinfo.al.picUrl
+        backgroundAudioManager.singer = musicinfo.ar[0].name
+        backgroundAudioManager.epname = musicinfo.al.name
+      }
       this.setData({
         pause: false
       })
@@ -70,16 +92,29 @@ Page({
           $url: 'lyric',
         }
       }).then(res => {
-        console.log(res)
-        this.setData({
-          lyric: res.result.lrc.lyric
-        })
+        // console.log(res)
+        const lyric = res.result.lrc.lyric
+        if(lyric) {
+          this.setData({
+            lyric
+          })
+        }
       })
     })
   },
   toggleShow() {
     this.setData({
       showLyric: !this.data.showLyric
+    })
+  },
+  onPlay() {
+    this.setData({
+      pause: false
+    })
+  },
+  onPause() {
+    this.setData({
+      pause: true
     })
   },
   togglePlaying() {

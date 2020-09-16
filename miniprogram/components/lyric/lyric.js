@@ -15,8 +15,18 @@ Component({
 
   observers: {
     lyric(lrc) {
-      // console.log(lrc)
-      this._parseLyric(lrc)
+      // console.log('lrc', lrc)
+      if(lrc === '暂无歌词') {
+        this.setData({
+          lyricList: [{
+              lrc,
+              second: 0
+            }],
+          activeIndex: -1
+        })
+      }else {
+        this._parseLyric(lrc)
+      }
     }
   },
 
@@ -26,7 +36,7 @@ Component({
   data: {
     scrollTop: 0,
     lyricList: [],
-    activeIndex: -1
+    activeIndex: 0
   },
 
   lifetimes: {
@@ -47,7 +57,7 @@ Component({
    */
   methods: {
     update(currentTime) {
-      console.log(currentTime)
+      // console.log(currentTime)
       const lyricList = this.data.lyricList
       // console.log(lyricList)
       if(lyricList.length === 0) {

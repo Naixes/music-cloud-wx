@@ -16,7 +16,10 @@ Component({
    * 组件的属性列表
    */
   properties: {
-
+    isSame: {
+      type: Boolean,
+      default: false
+    }
   },
 
   /**
@@ -37,6 +40,10 @@ Component({
   lifetimes: {  
     // 页面渲染完成
     ready() {
+      // 同一首歌曲手动设置总时长
+      if(this.properties.isSame && this.data.showTime.totalTime === '00:00') {
+        this._setTime()
+      }
       this._getMoveableDis()
       this._bindAudioEvent()
     }
@@ -83,7 +90,10 @@ Component({
     _bindAudioEvent() {
       backgroundAudioManager.onPlay(() => {
         console.log('onPlay')
+        // 注意：onTouchEnd执行完成之后有一定概率还会执行onChange，isMoving会出错，所以在onPlay中也设置了isMoving
         isMoving = false
+        // 同步到页面
+        this.triggerEvent('musicPlay')
       })
 
       backgroundAudioManager.onStop(() => {
@@ -92,6 +102,8 @@ Component({
 
       backgroundAudioManager.onPause(() => {
         console.log('Pause')
+        // 同步到页面
+        this.triggerEvent('musicPause')
       })
 
       backgroundAudioManager.onWaiting(() => {
