@@ -1,2 +1,22 @@
 <!--miniprogram/pages/blog-edit/blog-edit.wxml-->
-<text>miniprogram/pages/blog-edit/blog-edit.wxml</text>
+<view class="container">
+  <!-- 原生组件 -->
+  <textarea placeholder="分享新鲜事..." auto-focus maxlength="{{MAX_WORDS_NUM}}" bindinput="onInput" bindfocus="onFocus" bindblur="onBlur"></textarea>
+  <!-- 显示图片 -->
+  <view class="image-list">
+    <block wx:for="{{imageList}}" wx:key="*this">
+      <view class="image-wrap">
+        <image data-src="{{item}}" bind:tap="onPreviewImage" class="image" src="{{item}}" mode="aspectFill"></image>
+        <i data-index="{{index}}" bind:tap="onDelImage" class="iconfont icon-shanchu"></i>
+      </view>
+    </block>
+    <!-- 选择图片 -->
+    <view hidden="{{imageList.length >= MAX_IMAGES_NUM}}" class="image-wrap selectphoto" bind:tap="onChooseImage">
+      <i class="iconfont icon-jiahao"></i>
+    </view>
+  </view>
+</view>
+<view class="footer" style="bottom:{{footerBottom}}px">
+  <text class="words-num">{{wordsNum}}</text>
+  <button class="send-btn" bind:tap="send">发布</button>
+</view>

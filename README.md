@@ -552,5 +552,118 @@ onGetUserInfo(e) {
 }
 ```
 
+### 原生组件
+
+- 层级最高，不可覆盖
+
+- 不能使用在容器中
+
+- 不能增加动画和绝对定位
+
+- 绑定事件时不能使用`:`
+
+### 图片上传及预览
+
+图片上传：
+
+```js
+onChooseImage() {
+	const count = this.data.MAX_IMAGES_NUM - this.data.imageList.length
+    // 选择图片
+    wx.chooseImage({
+		count,
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success: res => {
+            console.log(res)
+            this.setData({
+                imageList: this.data.imageList.concat(res.tempFilePaths)
+            })
+        }
+    })
+},
+send() {
+    // 1、图片 -> 云存储 fileID 云文件ID
+    // 2、数据 -> 云数据库
+    // 数据库：内容、图片fileID、openid、昵称、头像、时间
+    if(content.trim() === '') {
+      wx.showModal({
+        title: '请输入内容',
+      })
+      return
+    }
+    wx.showLoading({
+      title: '发布中',
+      mask: true
+    })
+    let promiseArr = []
+    let fileIds = []
+    this.data.imageList.forEach(item => {
+      const p = new Promise((resolve, reject) => {
+        const suffix = /\.\w+$/.exec(item)[0]
+        wx.cloud.uploadFile({
+          cloudPath: `blog/${Date.now()}-${Math.random() * 1000000}${suffix}`,
+          filePath: item,
+          success: res => {
+            console.log(res)
+            fileIds = fileIds.concat(res.fileID)
+            resolve()
+          },
+          fail: err => {
+            console.log(err)
+            reject()
+          }
+        })
+      })
+      promiseArr.push(p)
+    })
+    // 将数据插入到云数据库，在小程序插入数据库自带openid
+    Promise.all(promiseArr).then(res => {
+      const params = {
+        // 内容、图片fileID、openid、昵称、头像、时间
+        ...userInfo,
+        content,
+        img: fileIds,
+        createTime: db.serverDate() // 服务端时间
+      }
+      // console.log(params)
+      db.collection('blog').add({data: params}).then(res => {
+        wx.hideLoading()
+        // 返回页面
+        wx.navigateBack()
+        wx.showToast({
+          title: '发布成功',
+        })
+        // 更新页面
+      }).catch(err => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '发布失败 ',
+        })
+        console.log(err)
+      })
+    })
+  },
+```
+
+图片预览：
+
+```html
+<block wx:for="{{imageList}}" wx:key="*this">
+    <view class="image-wrap">
+        <image data-src="{{item}}" bind:tap="onPreviewImage" class="image" src="{{item}}" mode="aspectFill"></image>
+        <i data-index="{{index}}" bind:tap="onDelImage" class="iconfont icon-shanchu"></i>
+    </view>
+</block>
+
+onPreviewImage(e) {
+    // 预览图片
+    wx.previewImage({
+    urls: this.data.imageList,
+    current: e.target.dataset.src
+    })
+},
+```
+
 
 
