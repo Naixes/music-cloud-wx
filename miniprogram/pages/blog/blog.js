@@ -9,8 +9,27 @@ Page({
   },
 
   onPublish() {
-    this.setData({
-      modalShow: true
+    // 判断是否已经获取授权
+    wx.getSetting({
+      success: res => {
+        // console.log(res)
+        if(res.authSetting['scope.userInfo']) {
+          // 获取用户信息
+          wx.getUserInfo({
+            success: res => {
+              // console.log(res)
+              this.loginSuccess({
+                detail: res.userInfo
+              })
+            },
+          })
+        }else {
+          // 弹出授权获取弹出层
+          this.setData({
+            modalShow: true
+          })
+        }
+      },
     })
   },
 
@@ -19,6 +38,20 @@ Page({
    */
   onLoad: function (options) {
 
+  },
+
+  loginFail() {
+    wx.showModal({
+      title: '授权用户才能发布',
+    })
+  },
+
+  loginSuccess(e) {
+    // console.log(e)
+    const detail = e.detail
+    wx.navigateTo({
+      url: `../blog-edit/blog-edit?nickName=${detail.nickName}&avatarUrl=${detail.avatarUrl}`,
+    })
   },
 
   /**

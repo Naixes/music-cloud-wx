@@ -9,5 +9,5 @@
     </view>
   </view>
   <!-- 弹出层 -->
-  <s-bottom-modal modalShow="{{modalShow}}" />
+  <s-login modalShow="{{modalShow}}" bind:loginSuccess="loginSuccess" bind:loginFail="loginFail" />
 </view>

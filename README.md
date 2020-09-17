@@ -497,5 +497,60 @@ options: {
 </s-bottom-modal>
 ```
 
+### `wx`默认样式问题
+
+比如button: not([size='mini'])中的样式引起的样式问题，可以在`app.json`中删掉`"style": "v2"`
+
+### 获取微信授权信息
+
+```js
+onPublish() {
+    // 判断是否已经获取授权
+    wx.getSetting({
+        success: res => {
+            // console.log(res)
+            if(res.authSetting['scope.userInfo']) {
+                // 获取用户信息
+                wx.getUserInfo({
+                    success: res => {
+                        // console.log(res)
+                        this.loginSuccess({
+                            detail: res.userInfo
+                        })
+                    },
+                })
+            }else {
+                // 弹出授权获取弹出层
+                this.setData({
+                    modalShow: true
+                })
+            }
+        },
+    })
+},
+```
+
+login
+
+```html
+<view slot="modal-content">
+    <button class="login" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">获取微信授权信息</button>
+</view>
+
+<!-- js -->
+onGetUserInfo(e) {
+    // console.log(e)
+    const userInfo = e.detail.userInfo
+    if(userInfo) {
+        this.triggerEvent('loginSuccess', userInfo)
+        this.setData({
+        modalShow: false
+        })
+    }else{
+    	this.triggerEvent('loginFail')
+    }
+}
+```
+
 
 

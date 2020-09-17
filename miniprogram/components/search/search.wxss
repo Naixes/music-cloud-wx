@@ -29,9 +29,3 @@
   transform: translate(16rpx, -50%);
   color: #9f9f9f;
 }
-
-/* 覆盖原有样式 */
-button:not([size='mini']) {
-  width: unset;
-  margin-left: 20rpx;
-}
