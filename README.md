@@ -665,5 +665,22 @@ onPreviewImage(e) {
 },
 ```
 
+### 防止事件冒泡
+
+```html
+<!-- catch：防止冒泡 -->
+<image class="img" src="{{item}}" mode="aspectFill" catch:tap="onPreviewImage" data-imgsrc="{{item}}" data-imgs="{{blog.img}}"></image>
+```
+
+### 调用前一个页面的方法
+
+```js
+// 更新页面
+const pages = getCurrentPages()
+// 获取前一个页面
+const prePage = pages[pages.length - 2]
+prePage.onPullDownRefresh()
+```
+
 
 

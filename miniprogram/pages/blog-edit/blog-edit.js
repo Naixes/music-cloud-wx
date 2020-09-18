@@ -136,6 +136,10 @@ Page({
           title: '发布成功',
         })
         // 更新页面
+        const pages = getCurrentPages()
+        // 获取前一个页面
+        const prePage = pages[pages.length - 2]
+        prePage.onPullDownRefresh()
       }).catch(err => {
         wx.hideLoading()
         wx.showToast({
