@@ -682,5 +682,43 @@ const prePage = pages[pages.length - 2]
 prePage.onPullDownRefresh()
 ```
 
+### 模糊查询
 
+```js
+exports.main = async (event, context) => {
+  const app = new TcbRouter({event})
+  // console.log(event)
+  const {keyword, start, count} = event
+  let w = {}
+  if(keyword.trim()) {
+    // 拼接搜索条件
+    w = {
+      // 可以直接写正则表达式，但是不适合变量
+      // 可以直接写成 db.RegExp()
+      content: new db.RegExp({
+        regexp: keyword,
+        // 不区分大小写
+        options: 'i'
+      })
+    }
+  }
+  // 获取博客列表
+  app.router('bloglist', async (ctx, next) => {
+    ctx.body = await blogCollection
+    .where(w)
+    .skip(start)
+    .limit(count)
+    .orderBy('createTime', 'desc')
+    .get()
+    .then(res => {
+      return res
+    })
+  })
+  
+  return app.serve()
+}
+```
 
+#### 索引管理
+
+在数据库索引管理中可以添加索引，提高查询效率，但是会占用一定空间

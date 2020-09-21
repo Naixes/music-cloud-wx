@@ -1,6 +1,6 @@
 <!--components/search/search.wxml-->
 <view class="container">
   <i class="iconfont icon-sousuo find"></i>
-  <input class="bar" placeholder="{{placeholder}}" placeholder-class="in-bar"></input>
-  <button class="search">搜索</button>
+  <input bind:input="onInput" class="bar" placeholder="{{placeholder}}" placeholder-class="in-bar"></input>
+  <button bind:tap="onSearch" class="search">搜索</button>
 </view>

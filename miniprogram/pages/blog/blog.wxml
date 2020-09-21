@@ -6,7 +6,7 @@
       <i class="iconfont icon-fabu"></i>
     </view>
     <view class="search-container">
-      <s-search iconfont="iconfont" icon-sousuo="icon-sousuo" />
+      <s-search bind:search="onSearch" iconfont="iconfont" icon-sousuo="icon-sousuo" />
     </view>
   </view>
   <!-- 列表 -->

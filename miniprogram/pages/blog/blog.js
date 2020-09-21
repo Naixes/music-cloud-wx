@@ -1,4 +1,5 @@
 // pages/blog/blog.js
+let keyword = ''
 Page({
 
   /**
@@ -16,6 +17,16 @@ Page({
     this._loadBlogList()
   },
 
+  onSearch(e) {
+    console.log(e);
+    keyword = e.detail.keyword
+    // 先清空列表
+    this.setData({
+      blogList: []
+    })
+    this._loadBlogList()
+  },
+
   _loadBlogList() {
     wx.showLoading({
       title: '加载中',
@@ -23,6 +34,7 @@ Page({
     wx.cloud.callFunction({
       name: 'blog',
       data: {
+        keyword,
         start: this.data.blogList.length,
         count: 10,
         $url: 'bloglist',
