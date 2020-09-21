@@ -1,0 +1,21 @@
+<view class="ctrl">
+  <view class="ctrl-item" bind:tap="onComment">
+    <i class="iconfont icon-pinglun icon"></i>
+    <text>评论</text>
+  </view>
+  <view class="ctrl-item share">
+    <button class="share-btn">
+      <i class="iconfont icon-fenxiang icon"></i>
+      <text>分享</text>
+    </button>
+  </view>
+</view>
+
+<s-login modalShow="{{showLogin}}" bind:loginSuccess="onLoginSuccess" bind:loginFail="onLoginFail" />
+<s-bottom-modal modalShow="{{showComment}}">
+  <!-- report-submit: 模板消息属性 -->
+  <form slot="modal-content" report-submit="true" bind:submit="onSend">
+    <textarea bindinput="onInput" name="content" class="comment-content" placeholder="写评论" value="{{content}}" fixed="true"></textarea>
+    <button class="send" form-type="submit">发送</button>
+  </form>
+</s-bottom-modal>

@@ -50,7 +50,7 @@ Page({
 
   goToDetail(e) {
     wx.navigateTo({
-      url: `../../pages/blog-detail/blog-detail?blogid=${e.target.dataset.blogid}`,
+      url: `../../pages/blog-detail/blog-detail?blogId=${e.target.dataset.blogId}`,
     })
   },
 

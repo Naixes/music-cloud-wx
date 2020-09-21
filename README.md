@@ -554,6 +554,8 @@ onGetUserInfo(e) {
 
 ### 原生组件
 
+比如`textarea`
+
 - 层级最高，不可覆盖
 
 - 不能使用在容器中
@@ -722,3 +724,170 @@ exports.main = async (event, context) => {
 #### 索引管理
 
 在数据库索引管理中可以添加索引，提高查询效率，但是会占用一定空间
+
+### 权限管理
+
+小程序端操作云数据库与云函数的区别：
+
+- 条数限制20
+- 存在权限限制，可配置，默认仅创建者可读写
+- 在小程序端插入数据会自带openid
+
+```js
+// 小程序端调用云数据库
+const db = wx.cloud.database()
+db.collection('blog').orderBy('createTime', 'desc').get().then((res)=>{
+    console.log(res)
+    const data = res.data
+    for (let i = 0, len = data.length; i<len; i++){
+        data[i].createTime = data[i].createTime.toString()
+    }
+    this.setData({
+        blogList: data
+    })
+})
+```
+
+### 数据库1对N关系设计
+
+三种场景：
+
+1. N为几个到几十个：一个博客最多9张图片，使用数组存在一个集合中，一次查询
+2. N为几十个到几百个：使用两个集合，将N的id（主键）存储在1的数组字段中，两次查询
+3. N为几千个以上：使用两个集合，将1的id（主键）存储在N的字段中，两次查询
+
+### 消息推送（已废弃）
+
+1. 要使用form表单
+
+`formid`：
+
+- 有效期7天
+- 提交一次生成一个`formid`对应一个模板消息
+
+2. 选择模板
+3. 创建云函数
+4. 配置云函数权限
+
+```json
+{
+  "permissions": {
+    "openapi": [
+      "subscribeMessage.send"
+    ]
+  }
+}
+```
+
+5. 云函数
+
+```js
+// 云函数入口函数
+exports.main = async(event, context) => {
+  const {
+    OPENID
+  } = cloud.getWXContext()
+
+  const result = await cloud.openapi.templateMessage.send({
+    touser: OPENID,
+    page: `/pages/blog-comment/blog-comment?blogId=${event.blogId}`,
+    data: {
+      keyword1: {
+        value: '评价完成'
+      },
+      keyword2: {
+        value: event.content
+      }
+    },
+    templateId: 'PjUkFDsOsC3ktzUATsIVy0t1D4RlL-aKbuhGUb7TLS0',
+    formId: event.formId
+  })
+  return result
+}
+```
+
+6. 调用云函数
+
+```js
+// 推送模板消息
+wx.cloud.callFunction({
+    name: 'sendMessage',
+    data: {
+        content,
+        formId,
+        blogId: this.properties.blogId
+    }
+}).then((res) => {
+    console.log(res)
+})
+```
+
+### 订阅消息
+
+与「模板消息」不同的是，其是在用户点击触发或者支付成功之后，开发者可在 7天内推送1-3条服务通知。而「订阅消息」则需要用户主动订阅消息通知，开发者才可向用户推送，但不受时间限制，具体发送信息条数根据该能力的不同类型有不同标准。
+
+此外，值得注意的是，使用「订阅消息」后，原小程序模板消息接口将于2020年1月10日下线，也就无法再使用原接口推送模板消息，开发者们需要注意及时调整接口。但是，微信服务号模板消息暂不受影响。
+
+1. 选择模板
+2. 创建云函数
+3. 配置云函数权限
+
+```json
+{
+  "permissions": {
+    "openapi": [
+      "subscribeMessage.send"
+    ]
+  }
+}
+```
+
+4. 订阅消息并执行云函数
+
+```js
+// 订阅消息
+requestSubscribeMessage(content) {
+    wx.requestSubscribeMessage({
+        tmplIds: ['8rltjYPoCcKO9GJELC5K5YwXXhUdYLN-ZQzKNxrdReE'],
+        success: res => {
+            // 消息推送
+            wx.cloud.callFunction({
+                name: 'sendMessage',
+                data: {
+                    date: formatTime(new Date()),
+                    content,
+                    blogId: this.properties.blogId
+                }
+            }).then(res => {
+                // console.log(res)
+            })
+        }
+    })
+},
+```
+
+5. 云函数
+
+```js
+// 云函数入口函数
+exports.main = async (event, context) => {
+  // 获取openid
+  const {OPENID} = cloud.getWXContext()
+
+  return await cloud.openapi.subscribeMessage.send({
+    touser: OPENID,
+    // 跳转的页面
+    page: `/pages/blog-detail/blog-detail?blogId=${event.blogId}`,
+    data: {
+      time1: {value: event.date},
+      thing3: {value: event.content},
+      phrase2: {value: '评论成功'},
+    },
+    templateId: '8rltjYPoCcKO9GJELC5K5YwXXhUdYLN-ZQzKNxrdReE',
+    // developer为开发版；trial为体验版；formal为正式版；默认为正式版
+    miniprogramState: 'developer'
+  })
+}
+```
+
+### 
