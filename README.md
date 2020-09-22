@@ -967,3 +967,81 @@ onShareAppMessage: function (e) {
 }
 ```
 
+### 获取用户信息
+
+不同方式的应用场景
+
+1. 只用于显示，不需要授权，只能看到自己的
+
+   **开放能力**：组件的形式
+
+   ```html
+   <open-data type="userAvatarUrl"></open-data>
+   <open-data type="userNickName"></open-data>
+   <open-data type="userCountry"></open-data>
+   <open-data type="userCity"></open-data>
+   ```
+
+2. `js`中获取用户信息，已授权的情况下才能使用
+
+   ```js
+   // 获取用户信息
+   wx.getUserInfo({
+       success: res => {
+           console.log(res)
+       }
+   })
+   ```
+
+3. 授权获取用户信息，通过button，小程序推荐方式
+
+   ```html
+   <button class="login" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">获取微信授权信息</button>
+   ```
+
+   ```js
+   methods: {
+       onGetUserInfo(e) {
+           // console.log(e)
+           const userInfo = e.detail.userInfo
+           if(userInfo) {
+               this.triggerEvent('loginSuccess', userInfo)
+               this.setData({
+                   modalShow: false
+               })
+           }else{
+               this.triggerEvent('loginFail')
+           }
+       }
+   }
+   ```
+
+4. 需要`openid`的场景，不需要授权
+
+   **传统方式**
+
+   小程序调用 `wx.login` 从微信服务器获取code（5分钟有效期）
+
+   小程序调用 `wx.request` 将code传递给后台服务器
+
+   后台服务器利用code从微信服务器获取 `openid` 和 `session_key` （会话密钥）
+
+   后台将用户标识发送给小程序本地存储
+
+   **云开发方式**
+
+   用户点击触发事件，小程序通过云函数（login）获取用户信息，可以存储到云数据库
+
+   ```js
+   wx.cloud.callFunction({
+       name: 'login'
+   }).then(res => {
+       // log
+   })
+   ```
+
+   不能通过`openid`获取用户信息，必须通过授权
+
+#### `unionid`
+
+在微信开发平台中不同应用中`unionid`是相同的，`openid`在不同应用中是不一样的
