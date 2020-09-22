@@ -142,7 +142,7 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage: function (e) {
-    console.log(e)
+    // console.log(e)
     const {blog} = e.target.dataset
     // 返回一个对象
     return {

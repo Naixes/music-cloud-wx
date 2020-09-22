@@ -13,6 +13,20 @@ const MAX_LIMIT = 100
 // 云函数入口函数
 exports.main = async (event, context) => {
   const app = new TcbRouter({event})
+  // 根据openid获取博客列表
+  app.router('getListByOpenid', async (ctx, next) => {
+    const wxContext = cloud.getWXContext()
+    const {start, limit} = event
+    ctx.body = await blogCollection
+    .where({_openid: wxContext.OPENID})
+    .skip(start)
+    .limit(limit)
+    .orderBy('createTime', 'desc')
+    .get()
+    .then(res => {
+      return res.data
+    })
+  })
   // 获取博客详情
   app.router('blogDetail', async (ctx, next) => {
     // 获取博客内容

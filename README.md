@@ -1081,5 +1081,74 @@ onShareAppMessage: function (e) {
 
 在微信开发平台中不同应用中`unionid`是相同的，`openid`在不同应用中是不一样的
 
+### 生成小程序码
 
+不推荐二维码
+
+为满足不同需求和场景，这里提供了两个接口，开发者可挑选适合自己的接口。
+
+- 接口 A: 适用于需要的码数量较少的业务场景`wxacode.get`
+  - 生成小程序码，可接受 path 参数较长，生成个数受限，数量限制见 [注意事项](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/qr-code.html#注意事项)，请谨慎使用。
+- 接口 B：适用于需要的码数量极多的业务场景`wxacode.getUnlimited`
+  - 生成小程序码，可接受页面参数较短，生成个数不受限。
+
+**注意事项**
+
+1. 接口只能生成已发布的小程序的二维码
+2. 接口 A 加上接口 C，总共生成的码数量限制为 100,000，请谨慎调用。
+3. 接口 B 调用分钟频率受限(5000次/分钟)，如需大量小程序码，建议预生成。
+
+```js
+// 云函数入口函数
+exports.main = async (event, context) => {
+    const wxContext = cloud.getWXContext()
+    const result = await cloud.openapi.wxacode.getUnlimited({
+        scene: wxContext.OPENID,
+        // 只有已发布的小程序才可以传这个参数，否则报错
+        // page: 'pages/blog/blog',
+        // 样式
+        // 颜色
+        lineColor: {
+            'r': 211,
+            'g': 60,
+            'b': 57
+        },
+        // 是否透明背景
+        isHyaline: true
+    })
+    // 将图片上传到云存储
+    const upload = await cloud.uploadFile({
+        cloudPath: `qrcode/${Date.now()}-${Math.random()*1000000}.png`,
+        fileContent: result.buffer
+    })
+    return upload.fileID
+}
+```
+
+#### 显示小程序码
+
+存储到云存储中再进行展示
+
+```js
+onTapQrCode() {
+    wx.showLoading({
+        title: '生成中',
+        mask: true
+    })
+    wx.cloud.callFunction({
+        name: 'getQrCode'
+    }).then(res => {
+        const fileId = res.result
+        wx.previewImage({
+            urls: [fileId],
+            current: fileId
+        })
+        wx.hideLoading()
+    })
+},
+```
+
+#### 获取小程序码中的参数
+
+`options`中获取
 
