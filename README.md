@@ -890,4 +890,80 @@ exports.main = async (event, context) => {
 }
 ```
 
-### 
+### 多集合查询
+
+```js
+// 获取博客详情
+app.router('blogDetail', async (ctx, next) => {
+    // 获取博客内容
+    const detail = await blogCollection.where({_id: event.blogId}).get().then(res => {
+        return res.data
+    })
+    // 获取评论列表
+    let commentList = {
+        data: []
+    }
+    // 获取评论数量
+    const countResult = await commentCollection.count()
+    const count = countResult.total
+    if(count > 0) {
+        const batchTimes = Math.ceil(count / MAX_LIMIT)
+        const tasks = []
+        for (let index = 0; index < batchTimes; index++) {
+            const promise = commentCollection
+            .skip(index * MAX_LIMIT)
+            .limit(MAX_LIMIT)
+            .where({blogId: event.blogId})
+            .orderBy('createTime', 'desc')
+            .get()
+            tasks.push(promise)
+        }
+        if(tasks.length > 0) {
+            commentList = (await Promise.all(tasks)).reduce((acc, cur) => {
+                return {
+                    data: acc.data.concat(cur.data)
+                }
+            })
+        }
+    }
+    ctx.body = {
+        detail,
+        commentList
+    }
+})
+```
+
+### 分享功能
+
+分享卡片的图片暂不支持云存储图片
+
+在组建内使用button
+
+```html
+<!-- 设置分享功能 -->
+<button open-type="share" data-blog="{{blog}}" class="share-btn">
+    <i class="iconfont icon-fenxiang icon"></i>
+    <text>分享</text>
+</button>
+```
+
+在当前页面
+
+```js
+
+/**
+   * 用户点击右上角分享
+   */
+onShareAppMessage: function (e) {
+    console.log(e)
+    const {blog} = e.target.dataset
+    // 返回一个对象
+    return {
+        title: blog.content,
+        path: `/pages/blog-detail/blog-detail?blogId=${blog._id}`,
+        // 可以使用云文件ID
+        imageUrl: blog.img[0]
+    }
+}
+```
+

@@ -50,7 +50,7 @@ Page({
 
   goToDetail(e) {
     wx.navigateTo({
-      url: `../../pages/blog-detail/blog-detail?blogId=${e.target.dataset.blogId}`,
+      url: `../../pages/blog-detail/blog-detail?blogId=${e.target.dataset.blogid}`,
     })
   },
 
@@ -141,7 +141,15 @@ Page({
   /**
    * 用户点击右上角分享
    */
-  onShareAppMessage: function () {
-
+  onShareAppMessage: function (e) {
+    console.log(e)
+    const {blog} = e.target.dataset
+    // 返回一个对象
+    return {
+      title: blog.content,
+      path: `/pages/blog-detail/blog-detail?blogId=${blog._id}`,
+      // 可以使用云文件ID
+      imageUrl: blog.img[0]
+    }
   }
 })

@@ -11,7 +11,8 @@ Component({
    * 组件的属性列表
    */
   properties: {
-    blogId: String
+    blogId: String,
+    blog: Object
   },
 
   /**
@@ -62,6 +63,8 @@ Component({
         wx.showToast({
           title: '评论成功',
         })
+        // 父组件刷新页面
+        this.triggerEvent('refreshCommentList')
       })
     },
     // 订阅消息

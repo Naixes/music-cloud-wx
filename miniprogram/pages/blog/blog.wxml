@@ -13,8 +13,8 @@
   <view class="blog-list">
     <block wx:for="{{blogList}}" wx:key="_id">
       <view class="blog-panel">
-        <x-blog-card blog="{{item}}" bind:tap="goToDetail" />
-        <x-blog-ctrl blogId="{{item._id}}" />
+        <s-blog-card data-blogid="{{item._id}}" blog="{{item}}" bind:tap="goToDetail" />
+        <s-blog-ctrl blog="{{item}}" blogId="{{item._id}}" />
       </view>
     </block>
   </view>
