@@ -35,7 +35,7 @@
   content: "\e626";
 }
 
-.icon-zanting1:before {
+.icon-zanting:before {
   content: "\e651";
 }
 
@@ -47,7 +47,7 @@
   content: "\e608";
 }
 
-.icon-bofang1:before {
+.icon-bofang:before {
   content: "\e696";
 }
 

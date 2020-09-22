@@ -31,6 +31,28 @@ Page({
     console.log(options.musicid, app.getActiveMusicId())
     this._loadMusicInfo(options.musicid)
   },
+  // 保存播放历史
+  savePlayHistory() {
+    // 获取当前正在播放的歌曲
+    const music = musiclist[musicindex]
+    // 获取当前历史，查看当前歌曲是否已存在
+    const openid = app.getOpenid()
+    let history = wx.getStorageSync(openid)
+    let exist = false
+    if(history.length > 0) {
+      for (let index = 0; index < history.length; index++) {
+        if(history[index].id == music.id) {
+          exist = true
+          break
+        }
+      }
+    }
+    if(!exist) {
+      history.unshift(music)
+      wx.setStorageSync(openid, history)
+    }
+  },
+  // 联动歌词
   timeUpdate(e) {
     this.selectComponent('.lyric').update(e.detail.currentTime)
   },
@@ -78,6 +100,8 @@ Page({
         backgroundAudioManager.coverImgUrl = musicinfo.al.picUrl
         backgroundAudioManager.singer = musicinfo.ar[0].name
         backgroundAudioManager.epname = musicinfo.al.name
+        // 保存播放历史
+        this.savePlayHistory()
       }
       this.setData({
         pause: false

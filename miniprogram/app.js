@@ -1,5 +1,6 @@
 //app.js
 App({
+  // 小程序启动
   onLaunch: function () {
     
     if (!wx.cloud) {
@@ -18,8 +19,28 @@ App({
 
     // 全局属性
     this.globalData = {
-      activeMusicId: -1
+      activeMusicId: -1,
+      openid: -1
     }
+
+    // 初始化openid
+    this.setOpenid()
+  },
+  getOpenid() {
+    return this.globalData.openid
+  },
+  setOpenid() {
+    // 获取openid
+    wx.cloud.callFunction({
+      name: 'login'
+    }).then(res => {
+      const openid = res.result.openid
+      this.globalData.openid = openid
+      // 初始化音乐播放历史的本地存储
+      if(wx.getStorageSync(openid) === '') {
+        wx.setStorageSync(openid, [])
+      }
+    })
   },
   getActiveMusicId() {
     return this.globalData.activeMusicId

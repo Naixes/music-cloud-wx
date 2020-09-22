@@ -1,0 +1,2 @@
+<!--pages/profile-playhistory/profile-playhistory.wxml-->
+<s-musiclist musiclist="{{musicList}}" />

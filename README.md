@@ -229,7 +229,7 @@ exports.main = async (event, context) => {
 
 日志需要在云函数的日志中查看
 
-### 将数据存储到本地
+### 本地存储
 
 ```js
 ...
@@ -312,6 +312,41 @@ backgroundAudioManager.onError((res) => {
 
 ```
 
+### 全局属性
+
+```js
+//app.js
+App({
+  // 小程序启动
+  onLaunch: function () {
+    ...
+
+    // 全局属性
+    this.globalData = {
+      activeMusicId: -1
+    }
+  },
+  getActiveMusicId() {
+    return this.globalData.activeMusicId
+  },
+  setActiveMusicId(id) {
+    this.globalData.activeMusicId = id
+  }
+})
+```
+
+使用
+
+```js
+// 获取app
+const app = getApp()
+...
+
+this.setData({
+    activeId: app.getActiveMusicId()
+})
+```
+
 ### 可移动组件
 
 进度条：
@@ -385,7 +420,7 @@ Component({
 
 ### 优化
 
-减少setData()的使用频率
+减少`setData()`的使用频率
 
 ### 自定义事件
 
@@ -1045,3 +1080,6 @@ onShareAppMessage: function (e) {
 #### `unionid`
 
 在微信开发平台中不同应用中`unionid`是相同的，`openid`在不同应用中是不一样的
+
+
+
