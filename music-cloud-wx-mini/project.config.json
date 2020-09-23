@@ -76,6 +76,13 @@
 					"pathName": "pages/blog/blog",
 					"query": "playlistId=5055796971",
 					"scene": null
+				},
+				{
+					"id": 3,
+					"name": "检查更新",
+					"pathName": "pages/playlist/playlist",
+					"query": "playlistId=5055796971",
+					"scene": null
 				}
 			]
 		}

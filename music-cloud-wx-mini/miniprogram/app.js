@@ -1,8 +1,16 @@
 //app.js
 App({
+  // 监听小程序的启动和切前台
+  onshow(options) {
+    // 获取场景值
+    console.log(options.scene)
+  },
   // 小程序启动
-  onLaunch: function () {
-    
+  onLaunch: function (options) {
+    // 获取场景值
+    console.log(options)
+    console.log(options.scene)
+    this.checkUpdate()
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
@@ -25,6 +33,24 @@ App({
 
     // 初始化openid
     this.setOpenid()
+  },
+  // 检查更新
+  checkUpdate() {
+    const updateManager = wx.getUpdateManager()
+    // 监听向微信后台请求检查更新结果事件。微信在小程序冷启动时自动检查更新，不需由开发者主动触发。
+    updateManager.onCheckForUpdate(res => {
+      if(res.hasUpdate) {
+        wx.showModal({
+          title: '检查更新',
+          content: '新版本已经准备好，是否重启应用',
+          success(res){
+            if(res.confirm) {
+              updateManager.applyUpdate()
+            }
+          }
+        })
+      }
+    })
   },
   getOpenid() {
     return this.globalData.openid
