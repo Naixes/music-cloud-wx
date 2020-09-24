@@ -38,12 +38,22 @@ export const constantRoutes = [
   {
     path: '/playlist',
     component: Layout,
-    children: [{
-      path: 'list',
-      name: 'playlist',
-      component: () => import('@/views/playlist/list'),
-      meta: { title: '歌单管理', icon: 'table' }
-    }]
+    children: [
+      {
+        path: 'list',
+        name: 'playlist',
+        component: () => import('@/views/playlist/list'),
+        meta: { title: '歌单管理', icon: 'table' }
+      },
+      {
+        path: 'edit/:id',
+        name: 'playlist',
+        component: () => import('@/views/playlist/edit'),
+        meta: { title: '编辑歌单', icon: 'table' },
+        props: true,
+        hidden: true
+      },
+    ]
   },
   {
     path: '/swiper',

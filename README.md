@@ -1374,6 +1374,8 @@ https://developers.weixin.qq.com/miniprogram/dev/reference/configuration/sitemap
 
 `git clone https://github.com/PanJiaChen/vue-admin-template.git`
 
+#### 滚动加载
+
 ### 后端
 
 `koa`安装
@@ -1433,5 +1435,104 @@ setInterval(async () => {
 }, (7200 - 300) * 1000)
 
 module.exports = getAccessToken
+```
+
+#### `koa-router`
+
+`MVC`结构
+
+#### CORS
+
+安装`koa2-cors`
+
+```js
+// 跨域
+app.use(cors({
+    origin: ['http://localhost:9528'],
+    // Access-Control-Allow-Credentials：意义是允许客户端携带验证信息，例如 cookie 之类的
+    credentials: true
+}))
+```
+
+#### 优化云函数调用
+
+```js
+const rp = require('request-promise')
+const getAccessToken = require('../utils/getAccessToken')
+
+const callCloudFn = async (ctx, fnName, params) => {
+    const access_token = await getAccessToken()
+    const URL = `https://api.weixin.qq.com/tcb/invokecloudfunction?access_token=${access_token}&env=${ctx.state.ENV}&name=${fnName}`
+    const options = {
+        method: 'POST',
+        uri: URL,
+        body: {
+            ...params
+        },
+        json: true // Automatically stringifies the body to JSON
+    };
+    return await rp(options)
+    .then(function (res) {
+        // console.log(res)
+        return res
+    })
+    .catch(function (err) {
+        // POST failed...
+    });
+}
+
+module.exports = callCloudFn
+```
+
+#### 调用云数据库
+
+一般情况下显示修改数据不用调用云函数可以直接操作云数据库（较快），在给用户发送消息或者获取小程序码等场景下才会用到云函数
+
+```js
+const rp = require('request-promise')
+const getAccessToken = require('../utils/getAccessToken')
+
+const callCloudDB = async (ctx, fnName, query = {}) => {
+    const ACCESS_TOKEN = await getAccessToken()
+    const URL = `https://api.weixin.qq.com/tcb/${fnName}?access_token=${ACCESS_TOKEN}`
+    const options = {
+        method: 'POST',
+        uri: URL,
+        body: {
+            query, 
+            env: ctx.state.ENV
+        },
+        json: true // Automatically stringifies the body to JSON
+    };
+    return await rp(options)
+    .then(function (res) {
+        // console.log(res)
+        return res
+    })
+    .catch(function (err) {
+        console.log(err)
+    });
+}
+
+module.exports = callCloudDB
+```
+
+##### `koa-body`
+
+```js
+// 接收post参数解析，ctx.request.body获取
+app.use(koaBody({
+    multipart: true,
+}))
+```
+
+##### 请求全局变量
+
+```js
+// 全局变量，ctx.state.ENV获取
+app.use(async (ctx, next) => {
+    ctx.state.ENV = ENV
+    await next()
+})
 ```
 
