@@ -26,39 +26,64 @@
     </el-table>
 
     <!-- 确认删除的对话框 -->
-    <!-- <el-dialog title="提示" :visible.sync="delDialogVisible" width="30%">
+    <el-dialog title="提示" :visible.sync="delDialogVisible" width="30%">
       <span>确定删除该图片吗</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="delDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="doDel">确 定</el-button>
       </span>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getSwiperlist } from '@/api/swiper'
+import { getSwiperlist, delSwiper } from '@/api/swiper'
 
 export default {
   data() {
     return {
       list: [],
-      loading: false
+      loading: false,
+      delDialogVisible: false,
+      delSwiper: {}
     }
   },
   created() {
-    this.loading = true
-    getSwiperlist().then(res => {
-      this.list = res.data
-      this.loading = false
-    })
+    this.getList()
   },
   methods: {
-    onDel() {
-
+    getList() {
+      this.loading = true
+      getSwiperlist().then(res => {
+        this.list = res.data
+        this.loading = false
+      })
     },
-    uploadSuccess() {
-
+    doDel() {
+      this.loading = true
+      delSwiper(this.delSwiper).then(res => {
+        this.loading = false
+        this.getList()
+        this.delDialogVisible = false
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        })
+      })
+    },
+    onDel(swiper) {
+      this.delSwiper = swiper
+      this.delDialogVisible = true
+    },
+    uploadSuccess(res) {
+      // console.log(res)
+      if(res.id_list.length > 0) {
+        this.$message({
+          message: '上传成功',
+          type: 'success'
+        })
+        this.getList()
+      }
     }
   }
 }
