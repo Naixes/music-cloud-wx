@@ -25,7 +25,7 @@
 			"outputPath": ""
 		},
 		"useIsolateContext": true,
-		"useCompilerModule": true,
+		"useCompilerModule": false,
 		"userConfirmedUseCompilerModuleSwitch": false
 	},
 	"appid": "wxa04740d6201a7919",
@@ -79,9 +79,9 @@
 				},
 				{
 					"id": 3,
-					"name": "检查更新",
+					"name": "首页",
 					"pathName": "pages/playlist/playlist",
-					"query": "playlistId=5055796971",
+					"query": "",
 					"scene": null
 				}
 			]

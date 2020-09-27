@@ -1,5 +1,6 @@
 // pages/playlist/playlist.js
 const MAX_LIMIT = 12
+const db = wx.cloud.database()
 Page({
 
   /**
@@ -9,9 +10,9 @@ Page({
     // openid: ''
     // 轮播图数据
     swiperImgUrls: [
-      { url: 'http://p1.music.126.net/oeH9rlBAj3UNkhOmfog8Hw==/109951164169407335.jpg', },
-      { url: 'http://p1.music.126.net/xhWAaHI-SIYP8ZMzL9NOqg==/109951164167032995.jpg', },
-      { url: 'http://p1.music.126.net/Yo-FjrJTQ9clkDkuUCTtUg==/109951164169441928.jpg', }
+      // { url: 'http://p1.music.126.net/oeH9rlBAj3UNkhOmfog8Hw==/109951164169407335.jpg', },
+      // { url: 'http://p1.music.126.net/xhWAaHI-SIYP8ZMzL9NOqg==/109951164167032995.jpg', },
+      // { url: 'http://p1.music.126.net/Yo-FjrJTQ9clkDkuUCTtUg==/109951164169441928.jpg', }
     ],
     playList: []
   },
@@ -28,6 +29,37 @@ Page({
     //   console.log(this.openid)
     // })
     this._getMusic()
+    this._getSwiper()
+  },
+
+  _getSwiper() {
+    db.collection('swiper').get().then(res => {
+      console.log(res)
+      this.setData({
+        swiperImgUrls: res.data
+      })
+    })
+  },
+
+  _getMusic() {
+    wx.showLoading({
+      title: '加载中',
+    })
+    wx.cloud.callFunction({
+      name: "music",
+      data: {
+        $url: 'playlist',
+        start: this.data.playList.length,
+        limit: MAX_LIMIT
+      }
+    }).then(res => {
+      this.setData({
+        // 云函数的返回值在result中
+        playList: this.data.playList.concat(res.result.data)
+      })
+      wx.stopPullDownRefresh()
+      wx.hideLoading()
+    })
   },
 
   /**
@@ -65,6 +97,7 @@ Page({
     this.setData({
       playList: []
     })
+    this._getSwiper()
     this._getMusic()
   },
 
@@ -81,25 +114,4 @@ Page({
   onShareAppMessage: function () {
 
   },
-
-  _getMusic() {
-    wx.showLoading({
-      title: '加载中',
-    })
-    wx.cloud.callFunction({
-      name: "music",
-      data: {
-        $url: 'playlist',
-        start: this.data.playList.length,
-        limit: MAX_LIMIT
-      }
-    }).then(res => {
-      this.setData({
-        // 云函数的返回值在result中
-        playList: this.data.playList.concat(res.result.data)
-      })
-      wx.stopPullDownRefresh()
-      wx.hideLoading()
-    })
-  }
 })

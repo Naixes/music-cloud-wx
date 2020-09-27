@@ -5,6 +5,7 @@ const koaBody = require('koa-body')
 
 const playlist = require('./controller/playlist.js')
 const swiper = require('./controller/swiper.js')
+const blog = require('./controller/blog.js')
 
 const app = new Koa()
 const router = new Router()
@@ -31,6 +32,7 @@ app.use(async (ctx, next) => {
 
 router.use('/playlist', playlist.routes())
 router.use('/swiper', swiper.routes())
+router.use('/blog', blog.routes())
 
 app.use(router.routes())
 app.use(router.allowedMethods())
